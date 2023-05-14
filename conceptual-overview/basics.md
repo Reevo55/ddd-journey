@@ -33,7 +33,7 @@ Summarized in bullet points:
 
 #### Bounded Context
 
-Bounded Context, another concept from DDD, is a boundary within which a particular model is defined and applicable. It defines the context for a model within the software, such as a module, service, or subsystem. This context bounds or limits the applicability of a particular model to ensure its consistency and integrity, and to prevent any unwanted side effects of intermingling models. A bounded context allows different teams to work on different parts of the system without stepping on each other's toes. It's a key part of designing large-scale systems with multiple teams and can be seen as a way of managing and limiting complexity.
+Bounded Context, is a boundary within which a particular model is defined and applicable. It defines the context for a model within the software, such as a module, service, or subsystem. This context bounds or limits the applicability of a particular model to ensure its consistency and integrity, and to prevent any unwanted side effects of intermingling models. A bounded context allows different teams to work on different parts of the system without stepping on each other's toes. It's a key part of designing large-scale systems with multiple teams and can be seen as a way of managing and limiting complexity.
 
 Summarized in bullet points:
 
