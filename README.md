@@ -8,6 +8,8 @@ The idea for this repository came from my desire to learn DDD and the lack of st
 
 This repository is a work in progress. I'll be adding more content as I learn more about DDD. If you have any suggestions or feedback, please feel free to reach out to me.
 
+I am utilizing wide range of knowledge sources, I will be keeping track of all the useful sources in /resource.md. I will also utilize the power of modern LLM's to my advantage for providing examples and explanations for my learning process.
+
 ## Goals
 
 - To understand the core philosophies and principles of Domain-Driven Design (DDD).
