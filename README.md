@@ -8,7 +8,7 @@ The idea for this repository came from my desire to learn DDD and the lack of st
 
 This repository is a work in progress. I'll be adding more content as I learn more about DDD. If you have any suggestions or feedback, please feel free to reach out to me.
 
-I am utilizing wide range of knowledge sources, I will be keeping track of all the useful sources in /resource.md. I will also utilize the power of modern LLM's to my advantage for providing examples and explanations for my learning process.
+I am utilizing wide range of knowledge sources, I will be keeping track of all the useful sources in /resource.md. I will also utilize the power of modern LLM's to my advantage for providing examples and explanations for my learning process. A lot of the content is my questions to AI and notes from the answers. I will be using tools like BARD and CHAT-GPT to help with my learning and documenting the process to be available in the most approachable way. So some of the content may be generated or edited by AI.
 
 ## Goals
 

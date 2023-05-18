@@ -83,11 +83,11 @@ class Customer {
 }
 
 // Creating a new customer entity
-const customer = new Customer('1', 'John Doe', 'john.doe@example.com');
+const customer = new Customer("1", "John Doe", "john.doe@example.com");
 
 // Changing the customer's name and email
-customer.name = 'Johnathan Doe';
-customer.email = 'johnathan.doe@example.com';
+customer.name = "Johnathan Doe";
+customer.email = "johnathan.doe@example.com";
 ```
 
 In this example, the `Customer` class is an entity with a unique identity represented by the `_id` property. The `_name` and `_email` properties are attributes that can change over time. The class encapsulates the behavior for getting and setting these attributes.
@@ -109,18 +109,17 @@ class Money {
   }
 }
 
-const fiveDollars = new Money(5, 'USD');
-const anotherFiveDollars = new Money(5, 'USD');
+const fiveDollars = new Money(5, "USD");
+const anotherFiveDollars = new Money(5, "USD");
 
 console.log(fiveDollars.equals(anotherFiveDollars)); // Outputs: true
 ```
 
 In this example, even though fiveDollars and anotherFiveDollars are different instances, they are considered equal because their amount and currency attributes are identical.
 
-
 ### Aggregates
 
-Aggregate is a pattern that helps us ensure the consistency of changes to objects in the business domain. 
+Aggregate is a pattern that helps us ensure the consistency of changes to objects in the business domain.
 
 An Aggregate is a group of related objects that are treated as a single unit. This group consists of one or more Entities, and possibly Value Objects. All of these objects together form a single conceptual whole, where one Entity leads as the "root," and the others are encapsulated within this root.
 
@@ -151,8 +150,8 @@ class Order {
 }
 
 // Usage
-const order = new Order('order1');
-order.addLineItem(new OrderLineItem('product1', 2));
+const order = new Order("order1");
+order.addLineItem(new OrderLineItem("product1", 2));
 ```
 
 In this code, Order is an Aggregate root, and OrderLineItem is part of the Aggregate. Any modifications to the Order or associated OrderLineItems are made through the Order, ensuring consistency and integrity of the Aggregate.
@@ -174,7 +173,7 @@ class OrderRepository {
   }
 
   findById(orderId: string): Order | undefined {
-    return this.orders.find(order => order.orderId === orderId);
+    return this.orders.find((order) => order.orderId === orderId);
   }
 
   findAll(): Order[] {
@@ -185,16 +184,15 @@ class OrderRepository {
 // Usage
 const orderRepository = new OrderRepository();
 
-const order = new Order('order1');
-order.addLineItem(new OrderLineItem('product1', 2));
+const order = new Order("order1");
+order.addLineItem(new OrderLineItem("product1", 2));
 
 orderRepository.save(order);
 
-console.log(orderRepository.findById('order1'));
+console.log(orderRepository.findById("order1"));
 ```
 
 In this code, `OrderRepository` is a repository for `Order` Aggregates. It provides methods to save an Order, find an Order by its ID, and find all Orders. The actual data storage mechanism (in this case, an in-memory array) is abstracted away from the client code.
-
 
 ### Domain events
 
@@ -208,7 +206,10 @@ Here's a simple TypeScript example:
 
 ```typescript
 class OrderPlaced {
-  constructor(public readonly orderId: string, public readonly orderDate: Date) {}
+  constructor(
+    public readonly orderId: string,
+    public readonly orderDate: Date
+  ) {}
 }
 
 class Order {
@@ -224,7 +225,7 @@ class Order {
 }
 
 // Usage
-const order = new Order('order1');
+const order = new Order("order1");
 const event = order.place();
 
 // Handle the event in Event Handler
@@ -234,3 +235,121 @@ if (event instanceof OrderPlaced) {
 ```
 
 In this code, the `Order` Entity raises an `OrderPlaced` Domain Event when the order is placed. This event can then be handled elsewhere in the system to trigger other actions.
+
+#### What are Domain Services and Application Services?
+
+Domain Services encapsulate domain-specific operations that do not naturally belong to any Entity or Value Object. These services become necessary when you need to express a sequence of domain operations that involves multiple domain entities or value objects, but doesn't logically fit into any single one of them.
+
+Application Services, on the other hand, orchestrate the use of Domain Services, Entities, and Value Objects to implement use cases or user stories in the system. They are the entry point to the core domain layer and are typically used to handle infrastructure concerns like transaction management and coordinating responses from multiple domain objects.
+
+Let's consider an e-commerce system where we have an `Order` entity and a `Customer` entity. We'll introduce a domain service called `DiscountService` which calculates a discount based on the customer's loyalty level and the total order amount. This doesn't naturally belong to any particular entity, hence we implement it as a Domain Service.
+
+Then, we'll have an application service called `OrderService` which orchestrates the use of the `Order` entity, the `Customer` entity and the `DiscountService` to implement the use case of placing an order.
+
+```typescript
+// discount.service.ts
+import { Injectable } from "@nestjs/common";
+import { Customer } from "./customer.entity";
+
+@Injectable()
+export class DiscountService {
+  calculateDiscount(customer: Customer, totalAmount: number): number {
+    // Example: 10% discount for gold customers
+    if (customer.loyaltyLevel === "gold") {
+      return totalAmount * 0.1;
+    }
+    return 0;
+  }
+}
+
+// order.service.ts
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Order } from "./order.entity";
+import { Customer } from "./customer.entity";
+import { DiscountService } from "./discount.service";
+
+@Injectable()
+export class OrderService {
+  constructor(
+    private discountService: DiscountService,
+    @InjectRepository(Order) private orderRepository: Repository<Order>,
+    @InjectRepository(Customer) private customerRepository: Repository<Customer>
+  ) {}
+
+  async placeOrder(customerId: number, order: Order) {
+    const customer = await this.customerRepository.findOne(customerId);
+    if (!customer) {
+      throw new Error("Customer not found");
+    }
+
+    const discount = this.discountService.calculateDiscount(
+      customer,
+      order.totalAmount
+    );
+    order.applyDiscount(discount);
+
+    await this.orderRepository.save(order);
+  }
+}
+```
+
+In this example, `DiscountService` is a Domain Service that encapsulates the domain logic for calculating discounts. `OrderService` is an Application Service that uses the `DiscountService` and repositories to implement the use case of placing an order. The `placeOrder` method in `OrderService` is a transaction script coordinating the necessary domain objects (`Order` and `Customer`) and the domain service (`DiscountService`).
+
+#### What is Infrastructure Service in DDD?
+
+Infrastructure Services in Domain-Driven Design (DDD) provide technical capabilities to support the layers of your application. These services abstract technical concerns, such as interacting with databases, sending emails, or communicating with external services or APIs.
+
+Infrastructure Services are not to be confused with Domain Services or Application Services. While Domain Services encapsulate domain-specific operations that don't fit naturally into entities or value objects, and Application Services orchestrate domain objects to implement business use-cases, Infrastructure Services provide the technical capabilities that support both Domain Services and Application Services.
+
+Let's consider an email notification service as an example of an Infrastructure Service. The service abstracts the technical details of sending an email, which might include connecting to an SMTP server, formatting the message, and handling errors.
+
+Here is how it might look like in a NestJS application:
+
+```typescript
+// email.service.ts
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+
+@Injectable()
+export class EmailService {
+  constructor(private configService: ConfigService) {}
+
+  sendEmail(to: string, subject: string, message: string): void {
+    // The actual implementation might involve a library like nodemailer
+    // For the purpose of this example, let's just console.log the details
+    console.log(
+      `Sending email to ${to} with subject ${subject} and message ${message}`
+    );
+  }
+}
+
+// user.service.ts
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { User } from "./user.entity";
+import { EmailService } from "./email.service";
+
+@Injectable()
+export class UserService {
+  constructor(
+    @InjectRepository(User) private userRepository: Repository<User>,
+    private emailService: EmailService
+  ) {}
+
+  async registerUser(email: string, password: string) {
+    // Some registration logic here...
+
+    // Use Infrastructure Service to send a welcome email
+    this.emailService.sendEmail(
+      email,
+      "Welcome to Our Service",
+      "Thank you for registering with us."
+    );
+  }
+}
+```
+
+In this example, `EmailService` is an Infrastructure Service that encapsulates the technical concern of sending an email. The `UserService`, which might be considered an Application Service, uses `EmailService` to send a welcome email after registering a user. This demonstrates the principle of separation of concerns, with technical concerns handled by Infrastructure Services, while business logic is dealt with in the domain layer (entities, domain services) and coordinated by application services.
