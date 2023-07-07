@@ -2,7 +2,7 @@
 
 The Cinema Seat Reservation System is designed to streamline and automate the process of reserving seats for movie screenings in theaters. The system is designed to be used by both customers and theater administrators.
 
-For moviegoers, the system offers an easy-to-use platform where they can explore a range of movies being screened. Each movie is richly detailed with its title, genre, duration, rating, synopsis, release date, director, and cast members. To assist in decision-making, customers can view showtimes and availability for each movie at different theaters. A distinguishing feature is the ability to view seating configurations and select the specific seats they want to reserve. The seating choices include options like standard, premium, or recliners, and may also cater to individuals requiring accessibility options.
+For moviegoers, the system offers an easy-to-use platform where they can explore a range of movies being screened. Each movie is richly detailed with its title, genre, duration, rating, synopsis, release date, director, and cast members. To assist in decision-making, customers can view showtimes and availability for each movie at different theaters. The main feature is the ability to view seating configurations and select the specific seats they want to reserve.
 
 Once seats are selected, the customer can make a reservation. The system offers multiple payment methods such as credit cards, digital wallets, or any other widely accepted payment option. It ensures secure processing and upon successful payment, reserves the seats for the customer. The customer receives a reservation code and a confirmation notification via email or SMS. This code can be used at the theater for a seamless check-in experience.
 
